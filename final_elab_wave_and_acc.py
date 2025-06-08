@@ -14,7 +14,7 @@ import seaborn as sns
 from scipy.signal import butter, filtfilt, find_peaks
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 
-#Function to find directory
+#Funzione che trova le directory
 def loader(name):
     base_dir = os.getcwd()
     directory = os.path.join(base_dir, name)
@@ -22,7 +22,7 @@ def loader(name):
     train = os.path.join(directory, 'Train')
     return base_dir, directory, test, train
 
-#Function to find csv in the folder
+#Funzione che trova tutti i file csv in una cartella
 def csv_finder (directory):
     csv_files = []
     
@@ -44,7 +44,7 @@ def csv_finder (directory):
             
     return files
 
-# Function to analyze features in frequency domain
+# Funzione che elabora le proprietà nelle frequenze
 def wave_eval (AP, CC, ML, y):
     step = 48
     step_len = 24
@@ -77,7 +77,7 @@ def wave_eval (AP, CC, ML, y):
     properties = np.vstack(properties).T
     return properties
 
-#Function to get from signal to frequency
+#Funzione che trasforma il segnale nelle frequenze
 def waveletter (data):
     S = 100
     scales = np.arange(1,S)
@@ -91,13 +91,13 @@ def waveletter (data):
     r = np.sqrt(np.mean(np.square(data)))
     return x, r
 
-# Function to find mid and high frequency peak
+# Funzione che trova i picchi delle frequenze medie e alte
 def mid_high (data):
     m = max(data[39:59])
     h = max(data[89:99])
     return m, h
 
-#Function to make boxplot and find the whiskers
+#Funzione che riporta le whiskers e può plottare i boxplot
 def boxplotter (arrays, names, title, flag, a = None, b = None):
     # Find the maximum length of the input arrays
     #arrays in the shape of [w,x,y,...]
@@ -358,33 +358,34 @@ for i in range(len(Train_files)): #(len(Train_files)):
     test = Test_files[i]
     train = Train_files[i]
     
-    #Estraction of direction of interest and labels
+    #Estraction of acceleration data and labels
     AP = train[:,0]
     CC = train[:,1]
     ML = train[:,2]
     Y = train[:,3]
     
-    #Finding the ideal tresholds intervals
+    #Finding ideal treshold
     #using boxplots
-    #First i extract features for each activity
+    #Feature extraction for each activity
     prop = []
     for j in range(4):
         idx = np.where(Y == (j+1))[0]
         properties = wave_eval(AP[idx],CC[idx],ML[idx],Y[idx])
         prop.append(properties[:,0:2])
     
-    #Trovo le whisker del boxplot
+    #Finding boxplots' whiskers
+    #for h_AP
     lw_hap, uw_hap = boxplotter([prop[0][:,0],prop[1][:,0],prop[2][:,0],prop[3][:,0]], 
                             ['h_AP_stop', 'h_AP_walk', 'h_AP_jog', 'h_AP_sprint'], 
                             f'Boxplot h_AP Iteration {i}', 0)
 
-    # Per CC_max
+    #For CC_max
     lw_cc, uw_cc = boxplotter([prop[0][:,1], prop[1][:,1], prop[2][:,1], prop[3][:,1]], 
                           ['CC_max_stop', 'CC_max_walk', 'CC_max_jog', 'CC_max_sprint'], 
                           f'Boxplot CC_max Iteration {i}', 0)
 
     
-    #Use whiskers to differentiate activities
+    #Using whiskers to detect intervals
     # Round center values to nearest 0.05 before making ranges
     a = round_to_step(np.mean([float(uw_cc[0]), float(lw_cc[1])]))
     b = round_to_step(np.mean([float(uw_hap[1]), float(lw_hap[2])]))
@@ -394,13 +395,6 @@ for i in range(len(Train_files)): #(len(Train_files)):
     tresh2 = decimal_range(b - 0.2, b + 0.2, 0.05)
     tresh3 = decimal_range(c - 0.2, c + 0.2, 0.05)
     
-    # #Uso le whisker per identificare gli intervalli
-    # a = np.mean([float(uw[4]), float(lw[5])])
-    # tresh1 = [a - 0.2, a + 0.2 + 0.05, 0.05]
-    # b = np.mean([float(uw[1]), float(lw[2])])
-    # tresh2 = [b - 0.2, b + 0.2 + 0.05, 0.05]
-    # c = np.mean([float(uw[2]), float(lw[3])])
-    # tresh3 = [c - 0.2, c + 0.2 + 0.05, 0.05]
     
     properties = wave_eval(AP,CC,ML,Y)
     
@@ -410,7 +404,7 @@ for i in range(len(Train_files)): #(len(Train_files)):
         "threshold_3":tresh3
         }
     
-    #Iteration to find tresholds with best accuracy
+    #Trying different treshold combinations to find the one with better accuracy
     best_accuracy = 0
     best_thresholds = None
     
@@ -437,7 +431,7 @@ for i in range(len(Train_files)): #(len(Train_files)):
     # Salva i best threshold
     best_thresholds_list.append(best_thresholds)
 
-    #Train analysis with best tresholds
+    #Train analysis with selected tresholds
     L = np.repeat(prop_eval(properties[:,0],properties[:,1],t1,t2,t3),24)
     Y = Y[0:len(L)]
     # conf_matrx = np.round(confusioner(Y,L)*100).astype(int)
@@ -446,7 +440,7 @@ for i in range(len(Train_files)): #(len(Train_files)):
     true_label_train.append(Y)
     eval_label_train.append(L)
     
-    #%% Treshold application on test files
+    #%% tresholds application on test files
     
     ap = test[:,0]
     cc = test[:,1]
@@ -486,7 +480,7 @@ for i in range(len(Train_files)): #(len(Train_files)):
     # thresh_r = 1.6
     
     print(f'Ideal stepcounting threhsolds: {thresh_w} {thresh_j} {thresh_r}')
-    # Save ideal stepcounting thresholds
+    # Saves ideal stepcounting thresholds
     stepcounting_thresholds_list.append([thresh_w, thresh_j, thresh_r])
     # thresh_w = 1.6
     # thresh_j = 1.6
@@ -533,15 +527,13 @@ for i in range(len(Train_files)): #(len(Train_files)):
     err_run_test = err_run_test + r-r_steps
     steps_run_test = steps_run_test + r_steps
     
-#Mean best thresholds
+# average best thresholds
 mean_best = np.mean(best_thresholds_list, axis=0)
 print(f'\nMean Best Thresholds: {mean_best[0]:.2f}, {mean_best[1]:.2f}, {mean_best[2]:.2f}')
 
-# Mean ideal stepcounting thresholds
+# average ideal stepcounting thresholds
 mean_step = np.mean(stepcounting_thresholds_list, axis=0)
 print(f'Mean Ideal Stepcounting Thresholds: {mean_step[0]:.2f}, {mean_step[1]:.2f}, {mean_step[2]:.2f}')
-
-#error printing
 
 full_err_walk_train = (err_walk_train/steps_walk_train)*100
 print(f'Train walking error: {full_err_walk_train}')
@@ -579,7 +571,7 @@ conf_matrx_test = np.round(confusioner(true_label_test,eval_label_test,flags)*10
 plot_conf(conf_matrx_test, 'Conf Matrix')
 
 
-#%% saving activity and stepcounting treshold
+#%% saving treshold e stepcounting
 results = {
     'Mean Best Threshold 1': [mean_best[0]],
     'Mean Best Threshold 2': [mean_best[1]],
@@ -596,36 +588,36 @@ results = {
 }
 
 
-# Athlete ID(es. '000')
+# Ottieni il nome dell'atleta (es. '000')
 athlete_id = os.path.basename(athl_dir)
 
-# Path creation to save files
+# Crea path completo della cartella dove salvare i risultati
 results_dir = os.path.join(athl_dir, f"{athlete_id}_results")
 
-#Create the folder if non existing
+# Crea la cartella se non esiste
 os.makedirs(results_dir, exist_ok=True)
 
-# Create file path
+# Costruisci il path del file
 filename = os.path.join(results_dir, f"threshold_results_{athlete_id}.xlsx")
 
 
-# Saving Excel file
+# Salva il file Excel
 df_results = pd.DataFrame(results)
 df_results.to_excel(filename, index=False)
 
-print(f"File 'threshold_results' salvato in: {filename}")
+print(f"File 'threshold_results' saved in: {filename}")
 
-#%% Saving true label e eval label
+#%% saving true label e eval label
 
-# Creating DataFrame with data
+# Creates DataFrame 
 df_labels = pd.DataFrame({
     'True Label Test': true_label_test,
     'Eval Label Test': eval_label_test,
 })
 
-# Building file path
+# file path 
 filename = os.path.join(results_dir, f"labels_comparison_{athlete_id}.xlsx")
 # Saving on Excel
 df_labels.to_excel(filename, index=False)
 
-print(f"File 'labels_comparison' salvato in: {filename}")
+print(f"File 'labels_comparison' saved in: {filename}")
