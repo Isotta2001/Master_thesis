@@ -459,6 +459,7 @@ for i in range(len(Train_files)): #(len(Train_files)):
     l[trans_values] = 5
     
     #%% Walking evaluation
+    # stepcounting method not use in the final version as the performance obtained with the cadence method were better
     
     W_steps = train[0,4]
     J_steps = train[1,4]
@@ -508,24 +509,24 @@ for i in range(len(Train_files)): #(len(Train_files)):
     steps_run_train = steps_run_train + r_steps
     
     
-    #%% Application on the Test database
+    # #%% Application on the Test database
     
-    idx = np.where(l == 2)
-    Walk_test = ap[idx]
-    idx = np.where(l == 3)
-    Jog_test = ap[idx]
-    idx = np.where(l == 4)
-    Run_test = ap[idx]
+    # idx = np.where(l == 2)
+    # Walk_test = ap[idx]
+    # idx = np.where(l == 3)
+    # Jog_test = ap[idx]
+    # idx = np.where(l == 4)
+    # Run_test = ap[idx]
     
-    w = stepcounter_thresh(Walk_test,thresh_w)
-    err_walk_test = err_walk_test + w-w_steps
-    steps_walk_test = steps_walk_test + w_steps
-    j = stepcounter_thresh(Jog_test,thresh_j)
-    err_jog_test = err_jog_test + j-j_steps
-    steps_jog_test = steps_jog_test + j_steps
-    r = stepcounter_thresh(Run_test,thresh_r,0,1)
-    err_run_test = err_run_test + r-r_steps
-    steps_run_test = steps_run_test + r_steps
+    # w = stepcounter_thresh(Walk_test,thresh_w)
+    # err_walk_test = err_walk_test + w-w_steps
+    # steps_walk_test = steps_walk_test + w_steps
+    # j = stepcounter_thresh(Jog_test,thresh_j)
+    # err_jog_test = err_jog_test + j-j_steps
+    # steps_jog_test = steps_jog_test + j_steps
+    # r = stepcounter_thresh(Run_test,thresh_r,0,1)
+    # err_run_test = err_run_test + r-r_steps
+    # steps_run_test = steps_run_test + r_steps
     
 # average best thresholds
 mean_best = np.mean(best_thresholds_list, axis=0)
@@ -541,12 +542,13 @@ full_err_jog_train = (err_jog_train/steps_jog_train)*100
 print(f'Train jogging error: {full_err_jog_train}')
 full_err_run_train = (err_run_train/steps_run_train)*100
 print(f'Train sprinting error: {full_err_run_train}')
-full_err_walk_test = (err_walk_test/steps_walk_test)*100
-print(f'Test walking error: {full_err_walk_test}')
-full_err_jog_test = (err_jog_test/steps_jog_test)*100
-print(f'Test jogging error: {full_err_jog_test}')
-full_err_run_test = (err_run_test/steps_run_test)*100
-print(f'Test sprinting error: {full_err_run_test}')
+
+# full_err_walk_test = (err_walk_test/steps_walk_test)*100
+# print(f'Test walking error: {full_err_walk_test}')
+# full_err_jog_test = (err_jog_test/steps_jog_test)*100
+# print(f'Test jogging error: {full_err_jog_test}')
+# full_err_run_test = (err_run_test/steps_run_test)*100
+# print(f'Test sprinting error: {full_err_run_test}')
     
     
     
@@ -582,9 +584,9 @@ results = {
     'Gold standard Error Walk (%)': [full_err_walk_train],
     'Gold standard Error Jog (%)': [full_err_jog_train],
     'Gold standard Error Run (%)': [full_err_run_train],
-    'Test Error Walk (%)': [full_err_walk_test],
-    'Test Error Jog (%)': [full_err_jog_test],
-    'Test Error Run (%)': [full_err_run_test]
+    # 'Test Error Walk (%)': [full_err_walk_test],
+    # 'Test Error Jog (%)': [full_err_jog_test],
+    # 'Test Error Run (%)': [full_err_run_test]
 }
 
 
