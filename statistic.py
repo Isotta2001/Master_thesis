@@ -10,8 +10,9 @@ import os
 from sklearn.metrics import classification_report
 
 # Path with Excel files
-input_folder = r'C:\Users\isotta\Desktop\dati Inail\intervalli\features\L1O_features\overall matrix'
-output_file = 'metrics_for_each_class.xlsx'
+input_folder = r'C:\Users\isotta\Desktop\dati Inail\intervalli\features\L1O_features\885\performance\confusion matrix overall'
+output_file = os.path.join(input_folder, 'metrics_for_each_class.xlsx')
+
 
 # Lists for data collection
 all_true = []
@@ -26,10 +27,10 @@ for filename in os.listdir(input_folder):
         # read file Excel (1st and 2nd columns)
         df = pd.read_excel(file_path, usecols=[0, 1], names=['true_label', 'eval_label'])
 
-        # Rimuovi righe vuote
+        # Remove empty lines
         df = df.dropna()
 
-        # Tieni solo le righe con label validi (1, 2, 3, 4)
+        # Keep only relevant labels (1, 2, 3, 4) (remove flagged ones)
         df = df[df['true_label'].isin([1, 2, 3, 4])]
         df = df[df['eval_label'].isin([1, 2, 3, 4])]
 
