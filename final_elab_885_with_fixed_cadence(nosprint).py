@@ -518,9 +518,14 @@ for i in range(50):
     time_w = len(Walk[:,0])/(sr*60)
     c_w = w_steps/time_w
     CW = round(c_w,2)
+    #CW = CW - 0.0761*CW #for maximal error in underestimation
+    CW = CW + 0.062*CW #for maximal error in overestimation
     time_j = len(Jog[:,0])/(sr*60)
     c_j = j_steps/time_j
     CJ = round(c_j,2)
+    #CJ = CJ - 0.0395*CJ
+    CJ = CJ + 0.0252*CJ
+
         
     # # Boxplot of the three threshold arrays
     # plt.figure(figsize=(8, 6))

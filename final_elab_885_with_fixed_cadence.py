@@ -483,7 +483,7 @@ def plot_conf(conf_mtrx,title):
         
 #%% Main
 
-base_dir, Dir , Test, Train = loader('006')
+base_dir, Dir , Test, Train = loader('000')
 arrays, names = database_create(Dir)
 #ideal_t = [1.14, 0.55, 1.85]
 
@@ -592,18 +592,18 @@ for i in range(50):
     time_w = len(Walk[:,0])/(sr*60)
     c_w = w_steps/time_w
     CW = round(c_w,2)
-    CW = CW - 0.0761*CW #for maximal error in underestimation
-    #CW = CW + 0.062+CW #for maximal error in overestimation
+    #CW = CW - 0.0761*CW #for maximal error in underestimation
+    CW = CW + 0.062*CW #for maximal error in overestimation
     time_j = len(Jog[:,0])/(sr*60)
     c_j = j_steps/time_j
     CJ = round(c_j,2)
-    CJ = CJ - 0.0395*CJ
-    #CJ = CJ + 0.0252*CJ
+    #CJ = CJ - 0.0395*CJ
+    CJ = CJ + 0.0252*CJ
     time_r = len(Run[:,0])/(sr*60)
     c_r = r_steps/time_r
     CR = round(c_r,2)
-    CR = CR - 0.083*CR
-    #CR = CR + 0.0659*CR
+    #CR = CR - 0.083*CR
+    CR = CR + 0.0659*CR
         
     # # Boxplot of the three threshold arrays
     # plt.figure(figsize=(8, 6))
